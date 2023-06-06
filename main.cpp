@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 
 class IStorageDevice
@@ -30,3 +31,33 @@ public:
         //алгоритм высолнения сортировки
     }
 };
+
+class Run
+{
+public:
+    Run()
+    {
+        startApp();
+    }
+    
+    void startApp()
+    {
+        setlocale(LC_ALL, "");
+
+        std::string file_in;
+        std::string file_out;
+
+        std::wcout << L"Введите имя файла входных данных: ";
+        std::cin >> file_in;
+        std::wcout << L"Введите имя файла для выходных данных: ";
+        std::cin >> file_out;
+        
+
+
+    }
+};
+
+int main()
+{
+    Run project;
+}
