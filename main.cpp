@@ -7,6 +7,11 @@
 
 #define DELIMITER " " 
 
+double write_delay; //задержка на записе 
+double delay_in_reading; // задержка на чтение 
+double tape_rewind; // перемотка ленты 
+double shift_tape_one_position; //сдвиг ленты на одну позицию
+long int memory; // количество выделеноой памяти
 
 using namespace std;
 
@@ -22,12 +27,7 @@ class Tape : public IStorageDevice
 {
 public:
 
-    double write_delay; //задержка на записе 
-    double delay_in_reading; // задержка на чтение 
-    double tape_rewind; // перемотка ленты 
-    double shift_tape_one_position; //сдвиг ленты на одну позицию
-    long int memory; // количество выделеноой памяти
-
+    
     Tape()
     {
 
@@ -49,22 +49,29 @@ class Algorithm
 public:
     string input_file;
     string output_file;
-    long int memory;
     unsigned int subSize;
+    
+    
+    
+
 
     Algorithm(string input, string output)
     {
-        this->input_file = input;
+        this->input_file = input; 
         this->output_file = output;
-        this->subSize = (memory*8)/sizeof(int);
-        cout << subSize;
-        //externalSort(input_file,output_file, subSize);
+        cout << sizeof(int) << endl;
+        cout << memory << endl;
+        this->subSize = (memory)/sizeof(int);
+        
+
+        externalSort(input_file,output_file, subSize);
     }
 
     // Функция для разделения файла на отсортированные подфайлы 
     int splitFile(string fileName, int subSize) { 
         ifstream inputFile(fileName); 
         int i = 0; 
+        
         bool endOfFile = false; 
     
         while (!endOfFile) { //заполение вектора данными 
@@ -141,42 +148,17 @@ public:
     void externalSort(string fileName, string outputFileName, int subSize) { 
         // Создаем отсортированные подфайлы 
         int numSubFiles = splitFile(fileName, subSize); 
-    
         // Сливаем отсортированные подфайлы 
         mergeFiles(outputFileName, numSubFiles, subSize); 
     } 
 
 };
 
-
-
-void worker()
-{
-    setlocale(LC_ALL, "");
-
-    string file_in;
-    string file_out;
-    string cfg_name = "cfg.txt";
-
-    wcout << L"Введите имя файла входных данных: ";
-    cin >> file_in;
-    wcout << L"Введите имя файла для выходных данных: ";
-    cin >> file_out;
-    AddInfo file(cfg_name);
-    Algorithm(file_in, file_out);
-}
-
-
 class AddInfo
 {
 public:
-    double write_delay; //задержка на записе 
-    double delay_in_reading; // задержка на чтение 
-    double tape_rewind; // перемотка ленты 
-    double shift_tape_one_position; //сдвиг ленты на одну позицию
-    long int memory; // количество выделеноой памяти
 
-public:
+    AddInfo(){}
 
     AddInfo(string name_file)
     {
@@ -227,14 +209,32 @@ public:
             cout << "problem with cfg.txt file";
         }
         fl.close(); // закрытие файла
-        cout << write_delay << endl;
-        cout << delay_in_reading << endl;
-        cout << tape_rewind << endl;
-        cout << shift_tape_one_position << endl;
-        cout << memory << endl;
-
     }
-}; 
+};
+
+
+
+void worker()
+{
+    setlocale(LC_ALL, "");
+
+    string file_in;
+    string file_out;
+    string cfg_name = "cfg.txt";
+
+    wcout << L"Введите имя файла входных данных: ";
+    cin >>  file_in;
+    wcout << L"Введите имя файла для выходных данных: ";
+    cin >>  file_out;
+    
+
+    AddInfo file("./config/"+cfg_name);
+    Algorithm alg("./tmp/"+file_in,"./tmp/"+file_out);
+    
+}
+
+
+ 
 
 int main()
 {
