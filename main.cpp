@@ -1,6 +1,13 @@
-#include <iostream>
-#include <string>
-#include <fstream>
+#include <iostream> 
+#include <fstream> 
+#include <vector> 
+#include <algorithm> 
+#include <queue> 
+#include <string> 
+
+#define DELIMITER " " 
+
+
 using namespace std;
 
 
@@ -13,12 +20,15 @@ public:
 
 class Tape : public IStorageDevice
 {
-
-
 public:
-    int a;
 
-    Tape(int a)
+    double write_delay; //задержка на записе 
+    double delay_in_reading; // задержка на чтение 
+    double tape_rewind; // перемотка ленты 
+    double shift_tape_one_position; //сдвиг ленты на одну позицию
+    long int memory; // количество выделеноой памяти
+
+    Tape()
     {
 
     }
@@ -37,111 +47,200 @@ public:
 class Algorithm
 {
 public:
-    void algorithm(Tape & name_file)
+    string input_file;
+    string output_file;
+    long int memory;
+    unsigned int subSize;
+
+    Algorithm(string input, string output)
     {
-        //алгоритм высолнения сортировки
+        this->input_file = input;
+        this->output_file = output;
+        this->subSize = (memory*8)/sizeof(int);
+        cout << subSize;
+        //externalSort(input_file,output_file, subSize);
     }
+
+    // Функция для разделения файла на отсортированные подфайлы 
+    int splitFile(string fileName, int subSize) { 
+        ifstream inputFile(fileName); 
+        int i = 0; 
+        bool endOfFile = false; 
+    
+        while (!endOfFile) { //заполение вектора данными 
+            vector<int> subData(subSize); // создаем вектор размера subSize
+            int j; 
+            for (j = 0; j < subSize; ++j) { 
+                if (!inputFile.eof()) { 
+                    inputFile >> subData[j]; 
+                } else { 
+                    endOfFile = true; 
+                    break; 
+                } 
+            } 
+    
+            // Сортируем данные в подфайле 
+            sort(subData.begin(), subData.begin() + j); // сотрировка вектора
+            ofstream outputFile(to_string(i)); // создает файл с названием i 
+            for (int k = 0; k < j; ++k) { // заполнение буфера отсортированными числами 
+                outputFile << subData[k] << DELIMITER; 
+            } 
+    
+            outputFile.close(); 
+            i++; 
+        } 
+    
+        inputFile.close(); 
+        return i; 
+    } 
+ 
+    // Функция для слияния подфайлов в один отсортированный файл 
+    void mergeFiles(string outputFileName, int n, int subSize) { 
+        vector<ifstream> subFiles(n); 
+        for (int i = 0; i < n; ++i) { 
+            subFiles[i].open(to_string(i)); 
+        } 
+    
+        // Открываем файл для вывода 
+        ofstream outputFile(outputFileName); 
+    
+        auto compare = [](pair<int, int>& a, pair<int, int>& b) { 
+            return a.first > b.first; 
+        }; 
+    
+        // Используем приоритетную очередь для хранения минимального элемента из каждого файла 
+        priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(compare)> pq(compare); 
+    
+        for (int i = 0; i < n; ++i) { 
+            int number; 
+            subFiles[i] >> number; 
+            pq.push({number, i}); 
+        } 
+    
+        while (!pq.empty()) { 
+            pair<int, int> minElem = pq.top(); 
+            pq.pop(); 
+            outputFile << minElem.first << DELIMITER; 
+    
+            if (!subFiles[minElem.second].eof()) { 
+                int number; 
+                subFiles[minElem.second] >> number; 
+                pq.push({number, minElem.second}); 
+            } 
+        } 
+    
+        for (int i = 0; i < n; ++i) { 
+            subFiles[i].close(); 
+            remove(to_string(i).c_str()); 
+        } 
+    
+        outputFile.close(); 
+    } 
+ 
+    // Внешняя сортировка 
+    void externalSort(string fileName, string outputFileName, int subSize) { 
+        // Создаем отсортированные подфайлы 
+        int numSubFiles = splitFile(fileName, subSize); 
+    
+        // Сливаем отсортированные подфайлы 
+        mergeFiles(outputFileName, numSubFiles, subSize); 
+    } 
+
 };
 
 
 
 void worker()
 {
-
     setlocale(LC_ALL, "");
 
-        std::string file_in;
-        std::string file_out;
+    string file_in;
+    string file_out;
+    string cfg_name = "cfg.txt";
 
-        std::wcout << L"Введите имя файла входных данных: ";
-        std::cin >> file_in;
-        std::wcout << L"Введите имя файла для выходных данных: ";
-        std::cin >> file_out;
-    
+    wcout << L"Введите имя файла входных данных: ";
+    cin >> file_in;
+    wcout << L"Введите имя файла для выходных данных: ";
+    cin >> file_out;
+    AddInfo file(cfg_name);
+    Algorithm(file_in, file_out);
 }
 
 
 class AddInfo
 {
 public:
-    double write_delay; //задержка по записи 
-    double delay_in_reading; // задержка по чтению
+    double write_delay; //задержка на записе 
+    double delay_in_reading; // задержка на чтение 
     double tape_rewind; // перемотка ленты 
-    double shift_tape_one_position; // сдвижение ленты на одну позицию
+    double shift_tape_one_position; //сдвиг ленты на одну позицию
+    long int memory; // количество выделеноой памяти
+
+public:
 
     AddInfo(string name_file)
     {
         addInfo(name_file);
     }
 
-    void arrayToNumberConst(double array[4])
-    {
-        for (int i =0; i<4; i++)
-        {
-            if (i == 0) write_delay = array[0];
-            if (i == 1) delay_in_reading = array[1];
-            if (i == 2) tape_rewind = array[2];
-            if (i == 3) shift_tape_one_position = array[3];
-        }
-        
-        cout << write_delay << endl;
-        cout << delay_in_reading << endl;
-        cout << tape_rewind << endl;
-        cout << shift_tape_one_position << endl;
-    }
-
-    bool isNumber(string str)
-    {
-        if (!(str.empty()) && str.find_first_not_of("0123456789")) 
-        {
-            return true;
-        }else
-        {
-            return false;
-        }
-    }
-
-    double strToDouble(string str)
-    {
-        char chars[str.length() + 1];
-        str.copy(chars, str.length() + 1);
-        return atof(chars);
-    }
-
     void addInfo(string file)
     {
-        double array_number[4];
+        double array_number[2];
         int counter = 0;
 
         ifstream fl(file);
-        string str;
+        string param;
+        double value;
         if (fl.is_open())
         {
             while (!(fl.eof()))
             {
-                str = "";
-                fl >> str;
-                if (isNumber(str)) //проверка на число
+                fl >> param;
+                fl >> value;
+                if (param == "write_delay") //проверка на число
                 {   
-                    array_number[counter] = strToDouble(str); 
-                    counter++; 
+                    write_delay = value;
+                    continue;
                 }
-                continue;
+                else if (param == "delay_in_reading")
+                {
+                    delay_in_reading = value;
+                    continue;
+                }
+                else if (param == "tape_rewind")
+                {
+                    tape_rewind = value;
+                    continue;
+                }
+                else if (param == "shift_tape_one_position")
+                {
+                    shift_tape_one_position = value;
+                    continue;
+                }
+                else if (param == "memory")
+                {
+                    memory = value;
+                }
             }  
         }else
         {
             cout << "problem with cfg.txt file";
         }
         fl.close(); // закрытие файла
-        arrayToNumberConst(array_number);
+        cout << write_delay << endl;
+        cout << delay_in_reading << endl;
+        cout << tape_rewind << endl;
+        cout << shift_tape_one_position << endl;
+        cout << memory << endl;
+
     }
 }; 
 
 int main()
 {
-    string name_file = "cfg.txt";
-    AddInfo file(name_file);
-    //worker();
+    worker();
+    
+    
 
     return 0;
 }
