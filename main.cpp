@@ -51,16 +51,10 @@ public:
     string output_file;
     unsigned int subSize;
     
-    
-    
-
-
     Algorithm(string input, string output)
     {
         this->input_file = input; 
         this->output_file = output;
-        cout << sizeof(int) << endl;
-        cout << memory << endl;
         this->subSize = (memory)/sizeof(int);
         
 
@@ -221,7 +215,8 @@ void worker()
     string file_in;
     string file_out;
     string cfg_name = "cfg.txt";
-
+    while (true)
+    {
     wcout << L"Введите имя файла входных данных: ";
     cin >>  file_in;
     wcout << L"Введите имя файла для выходных данных: ";
@@ -230,6 +225,18 @@ void worker()
 
     AddInfo file("./config/"+cfg_name);
     Algorithm alg("./tmp/"+file_in,"./tmp/"+file_out);
+
+    }
+    // wcout << L"Введите имя файла входных данных: ";
+    // cin >>  file_in;
+    // wcout << L"Введите имя файла для выходных данных: ";
+    // cin >>  file_out;
+    
+
+    // AddInfo file("./config/"+cfg_name);
+    // Algorithm alg("./tmp/"+file_in,"./tmp/"+file_out);
+
+
     
 }
 
