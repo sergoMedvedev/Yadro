@@ -6,16 +6,16 @@ int main()
     try
     {
         //переменные для main.cpp
-        std::string input_file = "input.txt";
-        std::string output_file = "output.txt";
+        std::string input_file;
+        std::string output_file;
 
         setlocale(LC_ALL, "");
 
         
-        //std::wcout << L"Введите имя файла входных данных: ";
-        //std::cin >>  input_file;
-        //std::wcout << L"Введите имя файла для выходных данных: ";
-        //std::cin >>  output_file;
+        std::wcout << L"Введите имя файла входных данных: ";
+        std::cin >>  input_file;
+        std::wcout << L"Введите имя файла для выходных данных: ";
+        std::cin >>  output_file;
             
         Interface inter("./tmp/" + input_file, "./tmp/" + output_file);
 

@@ -1,5 +1,5 @@
-write_delay 0.0004
-delay_in_reading 0.0004
+write_delay 0.0000004
+delay_in_reading 0.00000004
 tape_rewind 1
-shift_tape_one_position 0.05
+shift_tape_one_position 0.0000005
 memory 200000000

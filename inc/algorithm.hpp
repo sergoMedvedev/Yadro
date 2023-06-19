@@ -7,6 +7,7 @@
 #include <vector>
 #include <fstream> 
 #include <algorithm>
+#include "windows.h"
 
 using namespace std;
 
@@ -17,7 +18,7 @@ public:
     static void sort_buffer(std::vector<int> *subData, int *j);
        
     //метод слияния
-    static void mergeFile(int number_and_name_bufer, std::vector<std::ifstream> *subFiles, std::string file_out_name); 
+    static void mergeFile(int number_and_name_bufer, std::vector<std::ifstream> *subFiles, std::string file_out_name, double w_daley,double r_daley, double moov_one_position); 
 };
 
 #endif

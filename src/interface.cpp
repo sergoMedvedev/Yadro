@@ -12,10 +12,10 @@ void Interface::make_duffers_for_sort()
 {
     ParsConfig parsCFG(PATH_CONFIG); 
     Tape input(name_file_input, &parsCFG);
-    this->merging_buffers(input.name_number_buffer);
+    this->merging_buffers(input.name_number_buffer, &parsCFG);
 }
 
-void Interface::merging_buffers(int name_num_buffer)
+void Interface::merging_buffers(int name_num_buffer, ParsConfig *parsCnf)
 {
-    Tape outFile(this->name_file_output, name_num_buffer);
+    Tape outFile(this->name_file_output, name_num_buffer, parsCnf);
 }

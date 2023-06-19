@@ -8,6 +8,7 @@
 #include <vector>
 #include "parsCfg.hpp"
 #include "algorithm.hpp"
+#include "windows.h"
 
 #define DELIMITER " "
 
@@ -32,13 +33,13 @@ public:
     Tape(string input_file, ParsConfig *parsFile);
     
     //конструктор для выходного файла 
-    Tape(string out_file_name, int name_number_bufer);
+    Tape(string out_file_name, int name_number_bufer, ParsConfig *parsFile);
 
     //метод открытия выходного файла
-    static void write_sorted_data_in_outfile(string outFile, int number);
+    static void write_sorted_data_in_outfile(string outFile, int number, double w_daley, double moov_one_position);
 
     //метод для наполнения буферов отсортированными числами
-    static void write_in_buffer(vector<int> *subData, int *name_bufer, int *j);
+    static void write_in_buffer(vector<int> *subData, int *name_bufer, int *j, double w_delay, double moov_one_position);
 
     // закрытие и удаление буферов
     static void close_and_removing_buffers(vector<ifstream> *subFiles, int number_and_name_bufer); 

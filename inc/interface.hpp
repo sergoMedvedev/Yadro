@@ -19,6 +19,6 @@ public:
 
     void make_duffers_for_sort();
     
-    void merging_buffers(int name_num_bufer);
+    void merging_buffers(int name_num_bufer, ParsConfig *parsCnf);
 };
 #endif
